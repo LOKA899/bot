@@ -4,7 +4,7 @@ import websockets
 import json
 
 # API and WebSocket details
-API_URL = "https://api-lok-live.leagueofkingdoms.com/api"
+API_URL = "https://api-lok-live.leagueofkingdoms.com/api/kingdom"  # Updated endpoint
 WEBSOCKET_URL = "wss://socf-lok-live.leagueofkingdoms.com/socket.io/?EIO=4&transport=websocket&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzQ1NWIwYzIyZmI0ODRhMDVkYTg3ZWQiLCJraW5nZG9tSWQiOiI2NzQ1NWIwZDIyZmI0ODRhMDVkYTg3ZjQiLCJ3b3JsZElkIjo2MSwidmVyc2lvbiI6MTc4OSwiYXV0aFR5cGUiOiJjYXJ2IiwicGxhdGZvcm0iOiJ3ZWIiLCJ0aW1lIjoxNzM4OTA4ODM3NDkyLCJjbGllbnRYb3IiOiIwIiwiaXAiOiIxNTIuNTkuMjQyLjQyIiwiaWF0IjoxNzM4OTA4ODM3LCJleHAiOjE3Mzk1MTM2MzcsImlzcyI6Im5vZGdhbWVzLmNvbSIsInN1YiI6InVzZXJJbmZvIn0.n0OZAuPnw0NR0RaTxbmp_1hskZwFGDrLUQH5afJorpI"
 ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzQ1NWIwYzIyZmI0ODRhMDVkYTg3ZWQiLCJraW5nZG9tSWQiOiI2NzQ1NWIwZDIyZmI0ODRhMDVkYTg3ZjQiLCJ3b3JsZElkIjo2MSwidmVyc2lvbiI6MTc4OSwiYXV0aFR5cGUiOiJjYXJ2IiwicGxhdGZvcm0iOiJ3ZWIiLCJ0aW1lIjoxNzM4OTA4ODM3NDkyLCJjbGllbnRYb3IiOiIwIiwiaXAiOiIxNTIuNTkuMjQyLjQyIiwiaWF0IjoxNzM4OTA4ODM3LCJleHAiOjE3Mzk1MTM2MzcsImlzcyI6Im5vZGdhbWVzLmNvbSIsInN1YiI6InVzZXJJbmZvIn0.n0OZAuPnw0NR0RaTxbmp_1hskZwFGDrLUQH5afJorpI"
 
@@ -43,13 +43,16 @@ async def fetch_websocket_data():
         return [f"WebSocket Error: {str(e)}"]
 
 # Main execution
-if __name__ == "__main__":
+async def main():
     print("Fetching API data...")
     api_data = fetch_api_data()
     print("API Response:", json.dumps(api_data, indent=2))
 
     print("\nConnecting to WebSocket...")
-    websocket_data = asyncio.run(fetch_websocket_data())
+    websocket_data = await fetch_websocket_data()
     print("WebSocket Responses:")
     for msg in websocket_data:
         print(msg)
+
+# Run the main async function
+asyncio.run(main())
