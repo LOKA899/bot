@@ -1,3 +1,4 @@
+import streamlit as st
 import requests
 import asyncio
 import websockets
@@ -28,7 +29,6 @@ async def fetch_websocket_data():
 
             # Wait for connection acknowledgment
             ack = await websocket.recv()
-            print("Acknowledgment Received:", ack)
 
             # Sending a test message to fetch data (modify based on protocol specifics)
             await websocket.send("42[\"get_data\"]")
@@ -42,17 +42,19 @@ async def fetch_websocket_data():
     except Exception as e:
         return [f"WebSocket Error: {str(e)}"]
 
-# Main execution
-async def main():
-    print("Fetching API data...")
+# Streamlit integration
+st.title("Lokbot Data Viewer")
+
+# API Data Fetch
+if st.button("Fetch API Data"):
+    st.write("Fetching API data...")
     api_data = fetch_api_data()
-    print("API Response:", json.dumps(api_data, indent=2))
+    st.json(api_data)
 
-    print("\nConnecting to WebSocket...")
-    websocket_data = await fetch_websocket_data()
-    print("WebSocket Responses:")
+# WebSocket Data Fetch
+if st.button("Fetch WebSocket Data"):
+    st.write("Connecting to WebSocket...")
+    websocket_data = asyncio.run(fetch_websocket_data())
+    st.write("WebSocket Data:")
     for msg in websocket_data:
-        print(msg)
-
-# Run the main async function
-asyncio.run(main())
+        st.write(msg)
