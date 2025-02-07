@@ -26,7 +26,13 @@ async def connect_and_send(command):
             responses = []
             for _ in range(10):  # Adjust based on expected response count
                 response = await websocket.recv()
-                responses.append(response)
+                try:
+                    # Attempt to parse response as JSON
+                    parsed_response = json.loads(response)
+                    responses.append(parsed_response)
+                except json.JSONDecodeError:
+                    # Handle non-JSON response
+                    responses.append({"raw_response": response})
 
             return responses
     except Exception as e:
