@@ -31,8 +31,8 @@ async def fetch_websocket_data():
             ack = await websocket.recv()
             st.write("Acknowledgment Received:", ack)
 
-            # Sending a test message to fetch data (modify based on protocol specifics)
-            await websocket.send("42[\"get_data\"]")
+            # Sending a command to fetch kingdom name
+            await websocket.send("42[\"get_kingdom_name\"]")
 
             responses = []
             for _ in range(5):  # Adjust to receive more responses
