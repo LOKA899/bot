@@ -33,22 +33,22 @@ async def connect_and_send(command):
         return [f"WebSocket Error: {str(e)}"]
 
 # Streamlit app
-st.title("Streamlit WebSocket Scanner")
+st.title("LOK-Scanner Replication")
 
 # Command selection
-st.subheader("Available Functions")
-available_functions = {
+st.subheader("Available Commands")
+available_commands = {
     "Scan Kingdoms": ["scan"],
-    "Get Player Details": ["get_player_details"],
     "Fetch Resources": ["fetch_resources"],
+    "Get Player Details": ["get_player_details"],
 }
 
-command = st.selectbox("Choose a function to execute:", list(available_functions.keys()))
+selected_command = st.selectbox("Choose a command to execute:", list(available_commands.keys()))
 
 if st.button("Execute Command"):
-    st.write(f"Executing command: {command}...")
-    selected_command = available_functions[command]
-    responses = asyncio.run(connect_and_send(selected_command))
+    st.write(f"Executing command: {selected_command}...")
+    command_to_execute = available_commands[selected_command]
+    responses = asyncio.run(connect_and_send(command_to_execute))
     st.write("Responses:")
     for msg in responses:
         st.json(msg)
