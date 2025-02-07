@@ -1,7 +1,7 @@
-import streamlit as st
 import requests
 import asyncio
 import websockets
+import json
 
 # API and WebSocket details
 API_URL = "https://api-lok-live.leagueofkingdoms.com/api"
@@ -16,7 +16,7 @@ def fetch_api_data():
         if response.status_code == 200:
             return response.json()
         else:
-            return {"error": f"API Error: {response.status_code}"}
+            return {"error": f"API Error: {response.status_code}", "details": response.text}
     except Exception as e:
         return {"error": str(e)}
 
@@ -24,28 +24,32 @@ def fetch_api_data():
 async def fetch_websocket_data():
     try:
         async with websockets.connect(WEBSOCKET_URL) as websocket:
-            await websocket.send("42")  # Replace with actual WebSocket commands
+            await websocket.send("40")  # Initial handshake message for Socket.IO
+
+            # Wait for connection acknowledgment
+            ack = await websocket.recv()
+            print("Acknowledgment Received:", ack)
+
+            # Sending a test message to fetch data (modify based on protocol specifics)
+            await websocket.send("42[\"get_data\"]")
+
             responses = []
             for _ in range(5):  # Adjust to receive more responses
                 response = await websocket.recv()
                 responses.append(response)
+
             return responses
     except Exception as e:
         return [f"WebSocket Error: {str(e)}"]
 
-# Streamlit App
-st.title("Lokbot Data Viewer")
-
-# API Data
-if st.button("Fetch API Data"):
-    st.write("Fetching API data...")
+# Main execution
+if __name__ == "__main__":
+    print("Fetching API data...")
     api_data = fetch_api_data()
-    st.json(api_data)
+    print("API Response:", json.dumps(api_data, indent=2))
 
-# WebSocket Data
-if st.button("Fetch WebSocket Data"):
-    st.write("Connecting to WebSocket...")
+    print("\nConnecting to WebSocket...")
     websocket_data = asyncio.run(fetch_websocket_data())
-    st.write("WebSocket Data:")
+    print("WebSocket Responses:")
     for msg in websocket_data:
-        st.write(msg)
+        print(msg)
