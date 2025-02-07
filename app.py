@@ -29,6 +29,7 @@ async def fetch_websocket_data():
 
             # Wait for connection acknowledgment
             ack = await websocket.recv()
+            st.write("Acknowledgment Received:", ack)
 
             # Sending a test message to fetch data (modify based on protocol specifics)
             await websocket.send("42[\"get_data\"]")
