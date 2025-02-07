@@ -1,31 +1,28 @@
 import streamlit as st
-import requests
+import asyncio
+import websockets
 
-# API Details
-ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzQ1NWIwYzIyZmI0ODRhMDVkYTg3ZWQiLCJraW5nZG9tSWQiOiI2NzQ1NWIwZDIyZmI0ODRhMDVkYTg3ZjQiLCJ3b3JsZElkIjo2MSwidmVyc2lvbiI6MTc4OSwiYXV0aFR5cGUiOiJjYXJ2IiwicGxhdGZvcm0iOiJ3ZWIiLCJ0aW1lIjoxNzM4OTA4ODM3NDkyLCJjbGllbnRYb3IiOiIwIiwiaXAiOiIxNTIuNTkuMjQyLjQyIiwiaWF0IjoxNzM4OTA4ODM3LCJleHAiOjE3Mzk1MTM2MzcsImlzcyI6Im5vZGdhbWVzLmNvbSIsInN1YiI6InVzZXJJbmZvIn0.n0OZAuPnw0NR0RaTxbmp_1hskZwFGDrLUQH5afJorpI"
-API_URL = "https://api-lok-live.leagueofkingdoms.com/api"
+# WebSocket URL and token
+WEBSOCKET_URL = "wss://socf-lok-live.leagueofkingdoms.com/socket.io/?EIO=4&transport=websocket&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzQ1NWIwYzIyZmI0ODRhMDVkYTg3ZWQiLCJraW5nZG9tSWQiOiI2NzQ1NWIwZDIyZmI0ODRhMDVkYTg3ZjQiLCJ3b3JsZElkIjo2MSwidmVyc2lvbiI6MTc4OSwiYXV0aFR5cGUiOiJjYXJ2IiwicGxhdGZvcm0iOiJ3ZWIiLCJ0aW1lIjoxNzM4OTA4ODM3NDkyLCJjbGllbnRYb3IiOiIwIiwiaXAiOiIxNTIuNTkuMjQyLjQyIiwiaWF0IjoxNzM4OTA4ODM3LCJleHAiOjE3Mzk1MTM2MzcsImlzcyI6Im5vZGdhbWVzLmNvbSIsInN1YiI6InVzZXJJbmZvIn0.n0OZAuPnw0NR0RaTxbmp_1hskZwFGDrLUQH5afJorpI"
 
-# Fetch Kingdom Name
-def fetch_kingdom_data():
-    headers = {"Authorization": f"Bearer {ACCESS_TOKEN}"}
+async def connect_to_websocket():
     try:
-        response = requests.get(API_URL, headers=headers)
-        if response.status_code == 200:
-            data = response.json()
-            return data.get("data", {}).get("account", {}).get("kingdom", {}).get("name", "Unknown Kingdom")
-        else:
-            st.error(f"Error: {response.status_code}")
-            return None
+        async with websockets.connect(WEBSOCKET_URL) as websocket:
+            st.success("Connected to WebSocket!")
+            
+            # Example: Send a test message
+            await websocket.send("42")  # Modify this as per protocol requirements
+            st.info("Message sent to WebSocket!")
+
+            # Wait for a response
+            response = await websocket.recv()
+            st.write("Response from WebSocket:", response)
     except Exception as e:
-        st.error(f"Request failed: {e}")
-        return None
+        st.error(f"WebSocket Error: {e}")
 
-# Streamlit App
-st.title("Kingdom Name Fetcher")
+# Streamlit app interface
+st.title("WebSocket Tester")
 
-if st.button("Fetch Kingdom Name"):
-    kingdom_name = fetch_kingdom_data()
-    if kingdom_name:
-        st.success(f"Kingdom Name: {kingdom_name}")
-    else:
-        st.error("Failed to fetch kingdom name.")
+if st.button("Connect to WebSocket"):
+    st.write("Connecting to WebSocket...")
+    asyncio.run(connect_to_websocket())
